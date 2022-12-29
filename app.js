@@ -15,16 +15,25 @@ const PRIVATE_KEY = process.env.PRIVATE_KEY.replace(/\\n/g, '\n');
 const doc = new GoogleSpreadsheet(SPREADSHEET_ID);
 
 const appendSpreadsheet = async (row) => {
+    console.log("Function Called!");
   try {
     await doc.useServiceAccountAuth({
       client_email: CLIENT_EMAIL,
       private_key: PRIVATE_KEY,
     });
-    
-    await doc.loadInfo();
 
-    const sheet = doc.sheetsById[SHEET_ID];
-    const result = await sheet.addRow(row);
+    console.log("Service Account Authenticated");
+
+    doc.loadInfo().then(() => {
+        console.log("Loaded Doc info");
+        const sheet = doc.sheetsById[SHEET_ID];
+        const result = sheet.addRow(row).then(()=>{
+            console.log("Row written");
+        });
+
+    });
+
+    
   } catch (e) {
     console.error('Error: ', e);
   }
